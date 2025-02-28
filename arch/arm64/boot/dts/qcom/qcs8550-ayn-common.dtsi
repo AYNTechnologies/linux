@@ -13,6 +13,7 @@
 #include "pm8550vs.dtsi"
 #include "pmk8550.dtsi"
 
+/delete-node/ &aop_image_mem;
 /delete-node/ &aop_config_mem;
 /delete-node/ &camera_mem;
 /delete-node/ &ipa_fw_mem;
@@ -754,6 +755,10 @@
 
 &gpu {
 	status = "okay";
+
+	zap-shader {
+		firmware-name = "qcom/sm8550/ayn/a740_zap.mbn";
+	};
 };
 
 &i2c0 {
@@ -990,6 +995,12 @@
 	status = "okay";
 };
 
+&remoteproc_cdsp {
+	firmware-name = "qcom/sm8550/ayn/cdsp.mbn",
+			"qcom/sm8550/ayn/cdsp_dtb.mbn";
+	status = "okay";
+};
+
 &sdhc_2 {
 	cd-gpios = <&pm8550_gpios 12 GPIO_ACTIVE_LOW>;
 	pinctrl-names = "default", "sleep";
@@ -1185,6 +1196,7 @@
 		gamepad-pid = <0x3001>;
 		gamepad-rev = <0x0001>;
 
+		vdd-supply = <&vreg_bob2>;
 		enable-gpios = <&tlmm 12 GPIO_ACTIVE_HIGH>;
 		pinctrl-0 = <&mcu_en_active>;
 		pinctrl-names = "default";
