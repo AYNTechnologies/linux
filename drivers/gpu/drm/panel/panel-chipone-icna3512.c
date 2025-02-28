@@ -31,7 +31,7 @@ struct panel_info {
 	enum drm_panel_orientation orientation;
 
 	struct gpio_desc *reset_gpio;
-	struct regulator_bulk_data supplies[3];
+	struct regulator_bulk_data *supplies;
 };
 
 struct panel_desc {
@@ -48,6 +48,14 @@ struct panel_desc {
 	int (*init_sequence)(struct panel_info *pinfo);
 
 	struct drm_dsc_config dsc;
+};
+
+static const struct regulator_bulk_data panel_supplies[] = {
+	{ .supply = "vdd" },
+	{ .supply = "vddio" },
+	{ .supply = "vci" },
+	{ .supply = "disp" },
+	{ .supply = "blvdd" },
 };
 
 static inline struct panel_info *to_panel_info(struct drm_panel *panel)
@@ -213,7 +221,7 @@ static int icna3512_prepare(struct drm_panel *panel)
 	struct drm_dsc_picture_parameter_set pps;
 	int ret;
 
-    ret = regulator_bulk_enable(ARRAY_SIZE(pinfo->supplies), pinfo->supplies);
+    ret = regulator_bulk_enable(ARRAY_SIZE(panel_supplies), pinfo->supplies);
 	if (ret < 0) {
 		dev_err(panel->dev, "failed to enable regulators: %d\n", ret);
 		return ret;
@@ -223,7 +231,7 @@ static int icna3512_prepare(struct drm_panel *panel)
 
 	ret = pinfo->desc->init_sequence(pinfo);
 	if (ret < 0) {
-        regulator_bulk_disable(ARRAY_SIZE(pinfo->supplies), pinfo->supplies);
+        regulator_bulk_disable(ARRAY_SIZE(panel_supplies), pinfo->supplies);
 		dev_err(panel->dev, "failed to initialize panel: %d\n", ret);
 		return ret;
 	}
@@ -271,7 +279,7 @@ static int icna3512_unprepare(struct drm_panel *panel)
 	struct panel_info *pinfo = to_panel_info(panel);
 
 	gpiod_set_value_cansleep(pinfo->reset_gpio, 1);
-    regulator_bulk_disable(ARRAY_SIZE(pinfo->supplies), pinfo->supplies);
+    regulator_bulk_disable(ARRAY_SIZE(panel_supplies), pinfo->supplies);
 
 	return 0;
 }
@@ -398,14 +406,11 @@ static int icna3512_probe(struct mipi_dsi_device *dsi)
 	if (!pinfo)
 		return -ENOMEM;
 
-	pinfo->supplies[0].supply = "blvdd";
-	pinfo->supplies[1].supply = "iovdd";
-	pinfo->supplies[2].supply = "vdd";
-
-	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(pinfo->supplies),
-				      pinfo->supplies);
-	if (ret < 0)
-		return dev_err_probe(dev, ret, "failed to get regulators\n");
+	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(panel_supplies),
+	panel_supplies, &pinfo->supplies);
+	if (ret < 0){
+		return dev_err_probe(dev, ret, "Failed to get regulators\n");
+	}
 
 	pinfo->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
 	if (IS_ERR(pinfo->reset_gpio))
