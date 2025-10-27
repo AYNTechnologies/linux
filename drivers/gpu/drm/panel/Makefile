@@ -11,6 +11,7 @@ obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_LL2) += panel-boe-tv101wum-ll2.o
 obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_NL6) += panel-boe-tv101wum-nl6.o
 obj-$(CONFIG_DRM_PANEL_BOE_XM91080G) += panel-boe-xm91080g.o
 obj-$(CONFIG_DRM_PANEL_CHIPONE_ICNA35XX) += panel-chipone-icna35xx.o
+obj-$(CONFIG_DRM_PANEL_DDIC_CH13726A) += panel-ddic-ch13726a.o
 obj-$(CONFIG_DRM_PANEL_DSI_CM) += panel-dsi-cm.o
 obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
 obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
