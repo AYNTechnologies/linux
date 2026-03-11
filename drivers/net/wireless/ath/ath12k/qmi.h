@@ -529,6 +529,27 @@ struct qmi_wlanfw_bdf_download_resp_msg_v01 {
 	struct qmi_response_type_v01 resp;
 };
 
+#define QMI_WLANFW_QDSS_DOWNLOAD_REQ_MSG_V01_MAX_LEN	6167
+#define QMI_WLANFW_QDSS_DOWNLOAD_RESP_MSG_V01_MAX_LEN	7
+#define QMI_WLANFW_QDSS_DOWNLOAD_RESP_V01		0x0044
+#define QMI_WLANFW_QDSS_DOWNLOAD_REQ_V01			0x0044
+
+struct qmi_wlanfw_qdss_download_req_msg_v01 {
+	u8 total_size_valid;
+	u32 total_size;
+	u8 seg_id_valid;
+	u32 seg_id;
+	u8 data_valid;
+	u32 data_len;
+	u8 data[QMI_WLANFW_MAX_DATA_SIZE_V01];
+	u8 end_valid;
+	u8 end;
+};
+
+struct qmi_wlanfw_qdss_download_resp_msg_v01 {
+	struct qmi_response_type_v01 resp;
+};
+
 #define QMI_WLANFW_M3_INFO_REQ_MSG_V01_MAX_MSG_LEN	18
 #define QMI_WLANFW_M3_INFO_RESP_MSG_V01_MAX_MSG_LEN	7
 #define QMI_WLANFW_M3_INFO_RESP_V01		0x003C
