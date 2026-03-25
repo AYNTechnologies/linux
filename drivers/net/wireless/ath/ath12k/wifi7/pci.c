@@ -19,6 +19,7 @@
 
 #define QCN9274_DEVICE_ID		0x1109
 #define WCN7850_DEVICE_ID		0x1107
+#define WCN7860_DEVICE_ID		0x110e
 #define QCC2072_DEVICE_ID		0x1112
 
 #define ATH12K_PCI_W7_SOC_HW_VERSION_1	1
@@ -34,6 +35,7 @@
 static const struct pci_device_id ath12k_wifi7_pci_id_table[] = {
 	{ PCI_VDEVICE(QCOM, QCN9274_DEVICE_ID) },
 	{ PCI_VDEVICE(QCOM, WCN7850_DEVICE_ID) },
+	{ PCI_VDEVICE(QCOM, WCN7860_DEVICE_ID) },
 	{ PCI_VDEVICE(QCOM, QCC2072_DEVICE_ID) },
 	{}
 };
@@ -151,6 +153,26 @@ static int ath12k_wifi7_pci_probe(struct pci_dev *pdev,
 		default:
 			dev_err(&pdev->dev,
 				"Unknown hardware version found for WCN7850: 0x%x\n",
+				soc_hw_version_major);
+			return -EOPNOTSUPP;
+		}
+		break;
+	case WCN7860_DEVICE_ID:
+		ab->id.bdf_search = ATH12K_BDF_SEARCH_BUS_AND_BOARD;
+		ab_pci->msi_config = &ath12k_wifi7_msi_config[0];
+		ab->static_window_map = false;
+		ab_pci->pci_ops = &ath12k_wifi7_pci_ops_wcn7850;
+		ab_pci->window_reg_addr = WINDOW_REG_ADDRESS_QCC2072;
+		ath12k_wifi7_pci_read_hw_version(ab, &soc_hw_version_major,
+						 &soc_hw_version_minor);
+		ab->target_mem_mode = ATH12K_QMI_MEMORY_MODE_DEFAULT;
+		switch (soc_hw_version_major) {
+		case ATH12K_PCI_W7_SOC_HW_VERSION_2:
+			ab->hw_rev = ATH12K_HW_WCN7860_HW20;
+			break;
+		default:
+			dev_err(&pdev->dev,
+				"Unknown hardware version found for WCN7860: 0x%x\n",
 				soc_hw_version_major);
 			return -EOPNOTSUPP;
 		}
