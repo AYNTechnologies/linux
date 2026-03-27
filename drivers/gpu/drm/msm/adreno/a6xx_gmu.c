@@ -1335,6 +1335,7 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
 
 disable_irq:
 	disable_irq(gmu->gmu_irq);
+	msm_gpu_crashstate_capture(gpu, NULL, NULL, NULL, NULL);
 	a6xx_rpmh_stop(gmu);
 disable_clk:
 	clk_bulk_disable_unprepare(gmu->nr_clocks, gmu->clocks);

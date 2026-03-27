@@ -360,7 +360,7 @@ static void crashstate_get_vm_logs(struct msm_gpu_state *state, struct msm_gem_v
 	mutex_unlock(&vm->mmu_lock);
 }
 
-static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
+void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
 		struct msm_gem_submit *submit, struct msm_gpu_fault_info *fault_info,
 		char *comm, char *cmd)
 {
@@ -885,7 +885,8 @@ void msm_gpu_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
 
 	pm_runtime_get_sync(&gpu->pdev->dev);
 
-	msm_gpu_hw_init(gpu);
+	if (msm_gpu_hw_init(gpu))
+		msm_gpu_crashstate_capture(gpu, NULL, NULL, NULL, NULL);
 
 	submit->seqno = submit->hw_fence->seqno;
 

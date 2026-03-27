@@ -747,6 +747,8 @@ static inline void msm_gpu_crashstate_put(struct msm_gpu *gpu)
 }
 
 void msm_gpu_fault_crashstate_capture(struct msm_gpu *gpu, struct msm_gpu_fault_info *fault_info);
+void msm_gpu_crashstate_capture(struct msm_gpu *gpu, struct msm_gem_submit *submit,
+		struct msm_gpu_fault_info *fault_info, char *comm, char *cmd);
 
 /*
  * Simple macro to semi-cleanly add the MAP_PRIV flag for targets that can
