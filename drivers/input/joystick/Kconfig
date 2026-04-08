@@ -383,6 +383,10 @@ config JOYSTICK_QWIIC
 	  To compile this driver as a module, choose M here: the
 	  module will be called qwiic-joystick.
 
+config JOYSTICK_RSINPUT
+	tristate "UART Based gamepad driver that found in AYN and Retroid Pocket products"
+	depends on SERIAL_DEV_BUS
+
 config JOYSTICK_FSIA6B
 	tristate "FlySky FS-iA6B RC Receiver"
 	select SERIO
