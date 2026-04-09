@@ -55,6 +55,7 @@ static const struct qcom_cc_desc gx_clkctl_kaanapali_desc = {
 
 static const struct of_device_id gx_clkctl_kaanapali_match_table[] = {
 	{ .compatible = "qcom,kaanapali-gxclkctl" },
+	{ .compatible = "qcom,sm8750-gxclkctl" },
 	{ }
 };
 MODULE_DEVICE_TABLE(of, gx_clkctl_kaanapali_match_table);
